@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "병원 예약 확인 시스템"
+  },
+  "nav": {
+    "main": "오늘의 일정",
+    "allInOne": "예약·의사 정보",
+    "notification": "예약 이력 로그",
+    "patientInfo": "환자 정보",
+    "logout": "로그아웃"
+  },
+  "login": {
+    "title": "직원 로그인",
+    "staffId": "직원 ID",
+    "password": "비밀번호",
+    "submit": "로그인",
+    "error": "직원 ID 또는 비밀번호가 올바르지 않습니다"
+  },
+  "main": {
+    "title": "오늘의 일정",
+    "time": "시간",
+    "patient": "환자명",
+    "doctor": "담당 의사",
+    "department": "진료과",
+    "status": "상태"
+  },
+  "allInOne": {
+    "title": "예약·의사 정보",
+    "weekView": "주간 보기",
+    "yearView": "연간 보기",
+    "doctorInfo": "의사 정보",
+    "filterByDoctor": "의사로 필터링",
+    "allDoctors": "모든 의사",
+    "date": "날짜",
+    "workingDays": "근무일"
+  },
+  "notification": {
+    "title": "예약 이력 로그",
+    "timestamp": "발생 일시",
+    "action": "작업 유형",
+    "patient": "대상 환자",
+    "operator": "처리자"
+  },
+  "patientInfo": {
+    "title": "환자 정보",
+    "search": "환자명으로 검색",
+    "birthDate": "생년월일",
+    "phone": "연락처",
+    "lastVisit": "최근 방문",
+    "primaryDoctor": "담당 의사",
+    "noVisit": "방문 기록 없음"
+  },
+  "status": {
+    "checked-in": "접수 완료",
+    "in-progress": "진료 중",
+    "completed": "완료",
+    "cancelled": "취소"
+  },
+  "action": {
+    "created": "신규 예약",
+    "updated": "변경",
+    "cancelled": "취소"
+  },
+  "common": {
+    "language": "언어",
+    "noData": "데이터가 없습니다",
+    "loading": "불러오는 중..."
+  },
+  "days": {
+    "mon": "월",
+    "tue": "화",
+    "wed": "수",
+    "thu": "목",
+    "fri": "금",
+    "sat": "토",
+    "sun": "일"
+  }
+}
