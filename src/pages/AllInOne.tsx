@@ -3,25 +3,48 @@ import { useTranslation } from "react-i18next";
 import { fetchReservations } from "../api/reservations";
 import { fetchDoctors } from "../api/doctors";
 import { fetchPatients } from "../api/patients";
-import { getDoctorName, getPatientName } from "../utils/lookup";
+import { getPatientName } from "../utils/lookup";
+import { ChevronLeftIcon, ChevronRightIcon } from "../components/icons";
 import type { Doctor, Patient, Reservation } from "../types";
 
-type ViewMode = "week" | "year";
-
-function addDays(date: Date, days: number): Date {
-  const d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d;
-}
+const WEEKDAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 function toIso(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+function startOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function addMonths(date: Date, delta: number): Date {
+  return new Date(date.getFullYear(), date.getMonth() + delta, 1);
+}
+
+function buildMonthGrid(monthStart: Date): Date[] {
+  const year = monthStart.getFullYear();
+  const month = monthStart.getMonth();
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // Monday = 0
+  const lastDate = new Date(year, month + 1, 0);
+  const lastWeekday = (lastDate.getDay() + 6) % 7;
+
+  const days: Date[] = [];
+  for (let i = firstWeekday; i > 0; i--) {
+    days.push(new Date(year, month, 1 - i));
+  }
+  for (let d = 1; d <= lastDate.getDate(); d++) {
+    days.push(new Date(year, month, d));
+  }
+  for (let i = 1; i <= 6 - lastWeekday; i++) {
+    days.push(new Date(year, month + 1, i));
+  }
+  return days;
+}
+
 export function AllInOne() {
-  const { t } = useTranslation();
-  const [view, setView] = useState<ViewMode>("week");
-  const [doctorFilter, setDoctorFilter] = useState<string>("all");
+  const { t, i18n } = useTranslation();
+  const [monthStart, setMonthStart] = useState(() => startOfMonth(new Date()));
+  const [typeFilter, setTypeFilter] = useState("all");
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -32,10 +55,10 @@ export function AllInOne() {
     fetchPatients().then(setPatients);
   }, []);
 
-  const today = useMemo(() => new Date(), []);
-  const todayIso = toIso(today);
-  const weekEndIso = toIso(addDays(today, 7));
-  const currentYear = today.getFullYear();
+  const monthLabel = useMemo(
+    () => new Intl.DateTimeFormat(i18n.language, { year: "numeric", month: "long" }).format(monthStart),
+    [i18n.language, monthStart]
+  );
 
   if (reservations === null) {
     return (
@@ -46,82 +69,97 @@ export function AllInOne() {
     );
   }
 
-  const filtered = reservations
-    .filter((r) => doctorFilter === "all" || r.doctorId === doctorFilter)
-    .filter((r) => {
-      if (view === "week") {
-        return r.date >= todayIso && r.date <= weekEndIso;
-      }
-      return r.date.slice(0, 4) === String(currentYear);
-    })
-    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const departments = Array.from(new Set(doctors.map((d) => d.department)));
+  const todayIso = toIso(new Date());
+  const monthDays = buildMonthGrid(monthStart);
+  const currentMonthIndex = monthStart.getMonth();
+
+  const filteredReservations = reservations.filter(
+    (r) => typeFilter === "all" || r.department === typeFilter
+  );
+
+  const reservationsByDate = new Map<string, Reservation[]>();
+  for (const r of filteredReservations) {
+    const list = reservationsByDate.get(r.date) ?? [];
+    list.push(r);
+    reservationsByDate.set(r.date, list);
+  }
 
   return (
     <div className="page">
       <h2>{t("allInOne.title")}</h2>
 
-      <div className="toolbar">
-        <div className="toolbar__group">
+      <h3 className="section-label">{t("allInOne.appointmentType")}</h3>
+      <div className="chip-row">
+        <button
+          type="button"
+          className={typeFilter === "all" ? "chip chip--active" : "chip"}
+          onClick={() => setTypeFilter("all")}
+        >
+          {t("common.all")}
+        </button>
+        {departments.map((dept) => (
           <button
+            key={dept}
             type="button"
-            className={view === "week" ? "toggle-button toggle-button--active" : "toggle-button"}
-            onClick={() => setView("week")}
+            className={typeFilter === dept ? "chip chip--active" : "chip"}
+            onClick={() => setTypeFilter(dept)}
           >
-            {t("allInOne.weekView")}
+            {dept}
           </button>
-          <button
-            type="button"
-            className={view === "year" ? "toggle-button toggle-button--active" : "toggle-button"}
-            onClick={() => setView("year")}
-          >
-            {t("allInOne.yearView")}
-          </button>
-        </div>
-        <label className="toolbar__group">
-          {t("allInOne.filterByDoctor")}
-          <select value={doctorFilter} onChange={(e) => setDoctorFilter(e.target.value)}>
-            <option value="all">{t("allInOne.allDoctors")}</option>
-            {doctors.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        ))}
       </div>
 
-      {filtered.length === 0 ? (
-        <p>{t("common.noData")}</p>
-      ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>{t("allInOne.date")}</th>
-              <th>{t("main.time")}</th>
-              <th>{t("main.patient")}</th>
-              <th>{t("main.doctor")}</th>
-              <th>{t("main.department")}</th>
-              <th>{t("main.status")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((r) => (
-              <tr key={r.id}>
-                <td>{r.date}</td>
-                <td>{r.time}</td>
-                <td>{getPatientName(patients, r.patientId)}</td>
-                <td>{getDoctorName(doctors, r.doctorId)}</td>
-                <td>{r.department}</td>
-                <td>
-                  <span className={`status-badge status-badge--${r.status}`}>
-                    {t(`status.${r.status}`)}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div className="calendar-nav">
+        <button
+          type="button"
+          className="calendar-nav__button"
+          aria-label={t("allInOne.prevMonth")}
+          onClick={() => setMonthStart((m) => addMonths(m, -1))}
+        >
+          <ChevronLeftIcon size={16} />
+        </button>
+        <span className="calendar-nav__label">{monthLabel}</span>
+        <button
+          type="button"
+          className="calendar-nav__button"
+          aria-label={t("allInOne.nextMonth")}
+          onClick={() => setMonthStart((m) => addMonths(m, 1))}
+        >
+          <ChevronRightIcon size={16} />
+        </button>
+      </div>
+
+      <div className="calendar-grid">
+        {WEEKDAY_KEYS.map((key) => (
+          <div className="calendar-grid__weekday" key={key}>
+            {t(`days.${key}`)}
+          </div>
+        ))}
+        {monthDays.map((day) => {
+          const iso = toIso(day);
+          const events = reservationsByDate.get(iso) ?? [];
+          const visibleEvents = events.slice(0, 2);
+          const overflow = events.length - visibleEvents.length;
+          const isMuted = day.getMonth() !== currentMonthIndex;
+          const isToday = iso === todayIso;
+
+          return (
+            <div
+              className={"calendar-cell" + (isMuted ? " calendar-cell--muted" : "") + (isToday ? " calendar-cell--today" : "")}
+              key={iso}
+            >
+              <span className="calendar-cell__date">{day.getDate()}</span>
+              {visibleEvents.map((r) => (
+                <span className="calendar-event" key={r.id} title={`${r.time} ${getPatientName(patients, r.patientId)}`}>
+                  {r.time} {getPatientName(patients, r.patientId)}
+                </span>
+              ))}
+              {overflow > 0 && <span className="calendar-event--more">{t("allInOne.moreCount", { count: overflow })}</span>}
+            </div>
+          );
+        })}
+      </div>
 
       <h3>{t("allInOne.doctorInfo")}</h3>
       <table className="data-table">

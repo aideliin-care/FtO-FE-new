@@ -30,20 +30,25 @@
   },
   "allInOne": {
     "title": "예약·의사 정보",
-    "weekView": "주간 보기",
-    "yearView": "연간 보기",
     "doctorInfo": "의사 정보",
-    "filterByDoctor": "의사로 필터링",
-    "allDoctors": "모든 의사",
-    "date": "날짜",
-    "workingDays": "근무일"
+    "workingDays": "근무일",
+    "appointmentType": "예약 유형",
+    "prevMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "moreCount": "외 {{count}}건"
   },
   "notification": {
     "title": "예약 이력 로그",
     "timestamp": "발생 일시",
     "action": "작업 유형",
     "patient": "대상 환자",
-    "operator": "처리자"
+    "operator": "처리자",
+    "allActions": "모든 작업",
+    "searchPatient": "환자명으로 검색",
+    "dateFrom": "시작일",
+    "dateTo": "종료일",
+    "prev": "이전",
+    "next": "다음"
   },
   "patientInfo": {
     "title": "환자 정보",
@@ -52,7 +57,15 @@
     "phone": "연락처",
     "lastVisit": "최근 방문",
     "primaryDoctor": "담당 의사",
-    "noVisit": "방문 기록 없음"
+    "noVisit": "방문 기록 없음",
+    "patientId": "환자 ID",
+    "add": "환자 추가",
+    "edit": "수정",
+    "delete": "삭제",
+    "cancel": "취소",
+    "save": "저장",
+    "moreDetails": "상세 보기",
+    "confirmDelete": "{{name}} 님을 삭제하시겠습니까?"
   },
   "status": {
     "checked-in": "접수 완료",
@@ -69,7 +82,8 @@
     "language": "언어",
     "noData": "데이터가 없습니다",
     "loading": "불러오는 중...",
-    "minutes": "분"
+    "minutes": "분",
+    "all": "전체"
   },
   "days": {
     "mon": "월",

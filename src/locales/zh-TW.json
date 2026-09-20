@@ -30,20 +30,25 @@
   },
   "allInOne": {
     "title": "預約・醫師資訊",
-    "weekView": "週檢視",
-    "yearView": "年檢視",
     "doctorInfo": "醫師資訊",
-    "filterByDoctor": "依醫師篩選",
-    "allDoctors": "所有醫師",
-    "date": "日期",
-    "workingDays": "上班日"
+    "workingDays": "上班日",
+    "appointmentType": "預約類型",
+    "prevMonth": "上個月",
+    "nextMonth": "下個月",
+    "moreCount": "其他{{count}}筆"
   },
   "notification": {
     "title": "預約歷史紀錄",
     "timestamp": "發生時間",
     "action": "操作類型",
     "patient": "對象患者",
-    "operator": "操作人員"
+    "operator": "操作人員",
+    "allActions": "所有操作",
+    "searchPatient": "以患者姓名搜尋",
+    "dateFrom": "起始日期",
+    "dateTo": "結束日期",
+    "prev": "上一頁",
+    "next": "下一頁"
   },
   "patientInfo": {
     "title": "患者資訊",
@@ -52,7 +57,15 @@
     "phone": "聯絡電話",
     "lastVisit": "最近就診",
     "primaryDoctor": "主治醫師",
-    "noVisit": "尚無就診紀錄"
+    "noVisit": "尚無就診紀錄",
+    "patientId": "患者編號",
+    "add": "新增患者",
+    "edit": "編輯",
+    "delete": "刪除",
+    "cancel": "取消",
+    "save": "儲存",
+    "moreDetails": "顯示詳細資料",
+    "confirmDelete": "確定要刪除 {{name}} 嗎?"
   },
   "status": {
     "checked-in": "已報到",
@@ -69,7 +82,8 @@
     "language": "語言",
     "noData": "無資料",
     "loading": "載入中...",
-    "minutes": "分鐘"
+    "minutes": "分鐘",
+    "all": "全部"
   },
   "days": {
     "mon": "一",
