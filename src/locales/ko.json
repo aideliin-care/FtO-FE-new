@@ -3,11 +3,13 @@
     "title": "병원 예약 확인 시스템"
   },
   "nav": {
-    "main": "오늘의 일정",
-    "allInOne": "예약·의사 정보",
-    "notification": "예약 이력 로그",
+    "main": "대시보드",
+    "allInOne": "캘린더",
+    "notification": "예약",
     "patientInfo": "환자 정보",
-    "logout": "로그아웃"
+    "logout": "로그아웃",
+    "helpCenter": "고객센터",
+    "settings": "설정"
   },
   "login": {
     "title": "직원 로그인",
@@ -22,7 +24,9 @@
     "patient": "환자명",
     "doctor": "담당 의사",
     "department": "진료과",
-    "status": "상태"
+    "status": "상태",
+    "queueCurrent": "현재",
+    "queueTotal": "총건수"
   },
   "allInOne": {
     "title": "예약·의사 정보",
@@ -64,7 +68,8 @@
   "common": {
     "language": "언어",
     "noData": "데이터가 없습니다",
-    "loading": "불러오는 중..."
+    "loading": "불러오는 중...",
+    "minutes": "분"
   },
   "days": {
     "mon": "월",

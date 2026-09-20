@@ -24,6 +24,7 @@ export interface Reservation {
   time: string; // HH:mm
   department: string;
   status: ReservationStatus;
+  durationMinutes: number;
 }
 
 export type LogAction = "created" | "updated" | "cancelled";

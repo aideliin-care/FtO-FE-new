@@ -3,11 +3,13 @@
     "title": "醫院預約確認系統"
   },
   "nav": {
-    "main": "本日行程",
-    "allInOne": "預約・醫師資訊",
-    "notification": "預約歷史紀錄",
+    "main": "儀表板",
+    "allInOne": "行事曆",
+    "notification": "預約",
     "patientInfo": "患者資訊",
-    "logout": "登出"
+    "logout": "登出",
+    "helpCenter": "客服中心",
+    "settings": "設定"
   },
   "login": {
     "title": "員工登入",
@@ -22,7 +24,9 @@
     "patient": "患者姓名",
     "doctor": "主治醫師",
     "department": "診療科",
-    "status": "狀態"
+    "status": "狀態",
+    "queueCurrent": "目前",
+    "queueTotal": "總數"
   },
   "allInOne": {
     "title": "預約・醫師資訊",
@@ -64,7 +68,8 @@
   "common": {
     "language": "語言",
     "noData": "無資料",
-    "loading": "載入中..."
+    "loading": "載入中...",
+    "minutes": "分鐘"
   },
   "days": {
     "mon": "一",
