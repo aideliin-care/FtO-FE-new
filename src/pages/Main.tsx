@@ -3,8 +3,11 @@ import { useTranslation } from "react-i18next";
 import { fetchReservations } from "../api/reservations";
 import { fetchDoctors } from "../api/doctors";
 import { fetchPatients } from "../api/patients";
-import { getPatientName } from "../utils/lookup";
-import type { Doctor, Patient, Reservation } from "../types";
+import { fetchTherapySessions } from "../api/therapySessions";
+import { getDoctorName, getPatientName } from "../utils/lookup";
+import type { Doctor, Patient, Reservation, TherapySession } from "../types";
+
+const DOCTOR_CARD_COUNT = 3;
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -15,11 +18,13 @@ export function Main() {
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [therapySessions, setTherapySessions] = useState<TherapySession[]>([]);
 
   useEffect(() => {
     fetchReservations().then(setReservations);
     fetchDoctors().then(setDoctors);
     fetchPatients().then(setPatients);
+    fetchTherapySessions().then(setTherapySessions);
   }, []);
 
   if (reservations === null) {
@@ -31,12 +36,17 @@ export function Main() {
     .filter((r) => r.date === today)
     .sort((a, b) => a.time.localeCompare(b.time));
 
-  const byDoctor = doctors.map((doctor) => ({
+  const dashboardDoctors = doctors.slice(0, DOCTOR_CARD_COUNT);
+  const byDoctor = dashboardDoctors.map((doctor) => ({
     doctor,
     list: todaysReservations.filter((r) => r.doctorId === doctor.id),
   }));
 
-  const timeSlots = Array.from(new Set(todaysReservations.map((r) => r.time))).sort();
+  const todaysSessions = therapySessions
+    .filter((s) => s.date === today)
+    .sort((a, b) => a.time.localeCompare(b.time));
+  const therapists = Array.from(new Set(todaysSessions.map((s) => s.therapist)));
+  const sessionTimeSlots = Array.from(new Set(todaysSessions.map((s) => s.time))).sort();
 
   return (
     <div className="dashboard">
@@ -89,30 +99,30 @@ export function Main() {
         })}
       </div>
 
-      {timeSlots.length > 0 && doctors.length > 0 && (
+      {sessionTimeSlots.length > 0 && therapists.length > 0 && (
         <div
           className="schedule-grid"
-          style={{ gridTemplateColumns: `100px repeat(${doctors.length}, 1fr)` } as CSSProperties}
+          style={{ gridTemplateColumns: `100px repeat(${therapists.length}, 1fr)` } as CSSProperties}
         >
           <div className="schedule-grid__corner" />
-          {doctors.map((doctor) => (
-            <div className="schedule-grid__col-header" key={doctor.id}>
-              {doctor.name}
+          {therapists.map((therapist) => (
+            <div className="schedule-grid__col-header" key={therapist}>
+              {therapist}
             </div>
           ))}
 
-          {timeSlots.map((slot) => (
+          {sessionTimeSlots.map((slot) => (
             <div className="schedule-grid__row" key={slot} style={{ display: "contents" }}>
               <div className="schedule-grid__time">{slot}</div>
-              {doctors.map((doctor) => {
-                const r = todaysReservations.find((x) => x.doctorId === doctor.id && x.time === slot);
+              {therapists.map((therapist) => {
+                const session = todaysSessions.find((s) => s.therapist === therapist && s.time === slot);
                 return (
-                  <div className="schedule-grid__cell" key={`${doctor.id}-${slot}`}>
-                    {r && (
+                  <div className="schedule-grid__cell" key={`${therapist}-${slot}`}>
+                    {session && (
                       <div className="appointment-card">
-                        <span className="appointment-card__name">{getPatientName(patients, r.patientId)}</span>
+                        <span className="appointment-card__name">{getPatientName(patients, session.patientId)}</span>
                         <span className="appointment-card__meta">
-                          {r.department} · {r.durationMinutes}
+                          {getDoctorName(doctors, session.doctorId)} · {session.durationMinutes}
                           {t("common.minutes")}
                         </span>
                       </div>

@@ -27,6 +27,16 @@ export interface Reservation {
   durationMinutes: number;
 }
 
+export interface TherapySession {
+  id: string;
+  therapist: string; // therapist staff are a separate resource from doctors
+  patientId: string;
+  doctorId: string; // referring/supervising doctor
+  date: string; // ISO date (YYYY-MM-DD)
+  time: string; // HH:mm
+  durationMinutes: number;
+}
+
 export type LogAction = "created" | "updated" | "cancelled";
 
 export interface LogEntry {
